@@ -7,7 +7,7 @@ class CustomElevatedButton extends StatelessWidget {
 
   const CustomElevatedButton({
     super.key,
-    this.text = 'Login',
+    required this.text,
     this.onPressed,
     this.icon,
   });
