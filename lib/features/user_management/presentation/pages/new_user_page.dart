@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_elevated_button.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_text_field.dart';
 import 'package:tasks_todo/features/authentication/presentation/providers/theme_provider.dart';
@@ -38,7 +39,7 @@ class _NewUserPageState extends ConsumerState<NewUserPage> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.go('/login'),
         ),
         actions: [
           IconButton(
