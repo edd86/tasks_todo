@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_elevated_button.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_text_field.dart';
 import 'package:tasks_todo/features/authentication/presentation/providers/obscure_provider.dart';
 import 'package:tasks_todo/features/authentication/presentation/providers/theme_provider.dart';
-import 'package:tasks_todo/features/user_management/presentation/pages/new_user_page.dart';
 
 class LoginPage extends ConsumerWidget {
   LoginPage({super.key});
@@ -84,7 +84,12 @@ class LoginPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 28),
-            CustomElevatedButton(text: 'Login', onPressed: () {}),
+            CustomElevatedButton(
+              text: 'Login',
+              onPressed: () {
+                context.go('/');
+              },
+            ),
             const SizedBox(height: 32),
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
@@ -145,12 +150,7 @@ class LoginPage extends ConsumerWidget {
                 Text('Don\'t have an account?'),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const NewUserPage(),
-                      ),
-                    );
+                    context.go('/new_user');
                   },
                   child: Text('Register'),
                 ),
