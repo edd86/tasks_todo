@@ -32,7 +32,7 @@ class CalendarStrip extends ConsumerWidget {
           children: weekDates.map((data) {
             return _DateItem(
               day: data.day,
-              date: data.date.toString(),
+              date: data.date.day.toString(),
               isSelected: data.selected,
             );
           }).toList(),

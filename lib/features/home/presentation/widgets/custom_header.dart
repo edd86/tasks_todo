@@ -35,7 +35,7 @@ class CustomHeader extends ConsumerWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    DatesUtils().dateString(now),
+                    DatesUtils().fullDateString(now),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onPrimary.withValues(alpha: 0.8),
                     ),

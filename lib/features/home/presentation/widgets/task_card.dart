@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tasks_todo/core/utils/dates_utils.dart';
+import 'package:tasks_todo/features/home/domain/entities/task_entity.dart';
 
 class TaskCard extends StatelessWidget {
-  final String title;
-  final String time;
-  final String category;
-  final bool isCompleted;
-  final Color categoryColor;
+  final TaskEntity task;
+  const TaskCard({super.key, required this.task});
 
-  const TaskCard({
-    super.key,
-    required this.title,
-    required this.time,
-    required this.category,
-    required this.isCompleted,
-    required this.categoryColor,
-  });
-
-  @override
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -47,12 +36,12 @@ class TaskCard extends StatelessWidget {
             height: 24,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isCompleted ? primaryColor : Colors.transparent,
-              border: isCompleted
+              color: task.isCompleted ? primaryColor : Colors.transparent,
+              border: task.isCompleted
                   ? null
                   : Border.all(color: borderColor, width: 2),
             ),
-            child: isCompleted
+            child: task.isCompleted
                 ? Icon(
                     Icons.check,
                     size: 16,
@@ -67,11 +56,13 @@ class TaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  task.title,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: textColor,
-                    decoration: isCompleted ? TextDecoration.lineThrough : null,
+                    decoration: task.isCompleted
+                        ? TextDecoration.lineThrough
+                        : null,
                     decorationColor: textColor,
                   ),
                 ),
@@ -79,7 +70,7 @@ class TaskCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      time,
+                      DatesUtils().timeString(task.time),
                       style: TextStyle(
                         color: primaryColor,
                         fontWeight: FontWeight.w500,
@@ -90,7 +81,7 @@ class TaskCard extends StatelessWidget {
                     const Text("•", style: TextStyle(color: Colors.grey)),
                     const SizedBox(width: 4),
                     Text(
-                      category.toUpperCase(),
+                      task.category.toUpperCase(),
                       style: TextStyle(
                         color: primaryColor,
                         fontWeight: FontWeight.w500,
@@ -107,7 +98,7 @@ class TaskCard extends StatelessWidget {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: categoryColor,
+              color: task.categoryColor,
               shape: BoxShape.circle,
             ),
           ),

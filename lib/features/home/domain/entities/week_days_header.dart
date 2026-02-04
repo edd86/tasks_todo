@@ -1,6 +1,6 @@
 class WeekDaysHeader {
   final String day;
-  final int date;
+  final DateTime date;
   final bool selected;
 
   WeekDaysHeader({
