@@ -25,17 +25,29 @@ class DatesUtils {
     'Sunday',
   ];
 
-  String dateString(DateTime now) =>
+  String fullDateString(DateTime now) =>
       "${fullWeekDays[now.weekday - 1]}, ${months[now.month - 1]} ${now.day}";
 
+  //Obtener la hora en formato 12 horas
+  String timeString(DateTime now) {
+    final hour = now.hour;
+    final minutes = now.minute;
+    if (hour >= 10) {
+      return "$hour:${minutes < 10 ? '0$minutes' : minutes}";
+    } else {
+      return "0$hour:${minutes < 10 ? '0$minutes' : minutes}";
+    }
+  }
+
+  /// Resolver inicio de semana en domingo
   List<WeekDaysHeader> weekDates(DateTime now) {
-    final weekDateNow = now.weekday;
+    final firstDayOfWeek = now.subtract(Duration(days: now.weekday - 1));
     final weekDates = List.generate(6, (index) {
-      final date = now.subtract(Duration(days: weekDateNow - index));
+      final date = firstDayOfWeek.add(Duration(days: index));
       return WeekDaysHeader(
         day: fullWeekDays[date.weekday - 1],
-        date: date.day,
-        selected: date.weekday == weekDateNow,
+        date: date,
+        selected: date.weekday == now.weekday,
       );
     });
     return weekDates;
