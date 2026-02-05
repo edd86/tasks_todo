@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_elevated_button.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_text_field.dart';
@@ -130,15 +131,26 @@ class LoginPage extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ElevatedButton.icon(
+                ElevatedButton(
                   onPressed: () {},
-                  icon: Icon(Icons.g_mobiledata),
-                  label: Text('Google'),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SvgPicture.asset('assets/svg/google.svg', height: 22),
+                      SizedBox(width: 10),
+                      Text('Google'),
+                    ],
+                  ),
                 ),
-                ElevatedButton.icon(
+                ElevatedButton(
                   onPressed: () {},
-                  icon: Icon(Icons.apple),
-                  label: Text('Apple'),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset('assets/svg/apple.svg', height: 22),
+                      SizedBox(width: 10),
+                      Text('Apple'),
+                    ],
+                  ),
                 ),
               ],
             ),

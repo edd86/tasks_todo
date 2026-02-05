@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tasks_todo/features/home/presentation/widgets/lists_task.dart';
 import '../widgets/custom_header.dart';
 import '../widgets/calendar_strip.dart';
@@ -37,7 +38,7 @@ class HomePage extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add_task),
-        onPressed: () {},
+        onPressed: () => context.push('/new_task'),
       ),
     );
   }
