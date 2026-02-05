@@ -9,6 +9,7 @@ class CustomTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final TextCapitalization textCapitalization;
   final String label;
+  final bool isMultiLine;
 
   const CustomTextField({
     required this.controller,
@@ -19,6 +20,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     required this.textCapitalization,
     required this.label,
+    this.isMultiLine = false,
     super.key,
   });
 
@@ -51,6 +53,7 @@ class CustomTextField extends StatelessWidget {
               suffixIcon: suffixIcon,
             ),
             validator: validator,
+            maxLines: isMultiLine ? 5 : 1,
           ),
         ),
       ],
