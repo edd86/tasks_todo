@@ -5,11 +5,13 @@ class AppTheme {
   static const Color _lightPrimaryVariantColor = Colors.white;
   static const Color _ligthBackgroundColor = Colors.white;
   static const Color _lightTextColor = Colors.black;
+  static const Color _lightIconButtonColor = Color(0xFF766A60);
 
   static const Color _darkPrimaryColor = Color(0xFFc3662c);
   static const Color _darkPrimaryVariantColor = Color(0xFFffab40);
   static const Color _darkBackgroundColor = Color(0xFF1a1a1a);
   static const Color _darkTextColor = Colors.white;
+  static const Color _darkIconButtonColor = Color(0xFF766A60);
 
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -34,6 +36,9 @@ class AppTheme {
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(foregroundColor: _lightIconButtonColor),
     ),
   );
 
@@ -60,6 +65,9 @@ class AppTheme {
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(foregroundColor: _darkIconButtonColor),
     ),
   );
 }
