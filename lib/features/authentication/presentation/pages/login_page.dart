@@ -3,20 +3,34 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_elevated_button.dart';
+import 'package:tasks_todo/core/presentation/widgets/custom_snack_bar.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_text_field.dart';
+import 'package:tasks_todo/features/authentication/domain/entity/user_login_entity.dart';
+import 'package:tasks_todo/features/authentication/presentation/providers/auth_provider.dart';
 import 'package:tasks_todo/features/authentication/presentation/providers/obscure_provider.dart';
 import 'package:tasks_todo/features/authentication/presentation/providers/theme_provider.dart';
 
 class LoginPage extends ConsumerWidget {
   LoginPage({super.key});
 
-  final TextEditingController emailIdController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _emailIdController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final obscureText = ref.watch(obscureProvider);
     final themeMode = ref.watch(themeProvider);
+
+    ref.listen(authProvider, (previous, next) {
+      if (next.isError) {
+        _showMessage(context, next.message ?? 'Unknown error');
+      } else if (next.isSuccess) {
+        _showMessage(context, next.message ?? 'Login successful');
+        context.go('/');
+      }
+    });
+
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +63,7 @@ class LoginPage extends ConsumerWidget {
             ),
             const SizedBox(height: 40),
             CustomTextField(
-              controller: emailIdController,
+              controller: _emailIdController,
               hintText: 'Email',
               obscureText: false,
               keyboardType: TextInputType.emailAddress,
@@ -59,7 +73,7 @@ class LoginPage extends ConsumerWidget {
             ),
             SizedBox(height: 18, width: double.infinity),
             CustomTextField(
-              controller: passwordController,
+              controller: _passwordController,
               hintText: 'Password',
               obscureText: obscureText,
               keyboardType: TextInputType.visiblePassword,
@@ -85,12 +99,19 @@ class LoginPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 28),
-            CustomElevatedButton(
-              text: 'Login',
-              onPressed: () {
-                context.go('/');
-              },
-            ),
+            if (authState.isLoading)
+              const CircularProgressIndicator()
+            else
+              CustomElevatedButton(
+                text: 'Login',
+                onPressed: () {
+                  final userData = UserLoginEntity(
+                    email: _emailIdController.text,
+                    password: _passwordController.text,
+                  );
+                  ref.read(authProvider.notifier).login(userData);
+                },
+              ),
             const SizedBox(height: 32),
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
@@ -172,6 +193,12 @@ class LoginPage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(CustomSnackBar(message: message, context: context));
   }
 }
 /* class LoginPage extends StatefulWidget {
