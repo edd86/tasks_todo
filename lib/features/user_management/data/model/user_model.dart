@@ -33,7 +33,7 @@ class UserModel {
       'id': id,
       'full_name': fullName,
       'email': email,
-      'password': password,
+      'password': hashPassword(password),
       'phone_number': phoneNumber,
       'occupation': occupation,
     };
@@ -51,13 +51,13 @@ class UserModel {
       id: id ?? this.id,
       fullName: fullName ?? this.fullName,
       email: email ?? this.email,
-      password: password ?? this.password,
+      password: password ?? hashPassword(password!),
       phoneNumber: phoneNumber ?? this.phoneNumber,
       occupation: occupation ?? this.occupation,
     );
   }
 
-  String hashPassword() {
+  String hashPassword(String password) {
     return BCrypt.hashpw(password, BCrypt.gensalt());
   }
 }

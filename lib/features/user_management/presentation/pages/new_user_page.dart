@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_elevated_button.dart';
+import 'package:tasks_todo/core/presentation/widgets/custom_snack_bar.dart';
+import 'package:tasks_todo/features/user_management/presentation/providers/user_management_providers.dart';
 import 'package:tasks_todo/core/presentation/widgets/custom_text_field.dart';
 import 'package:tasks_todo/features/authentication/presentation/providers/theme_provider.dart';
+
+import 'package:tasks_todo/features/user_management/domain/entities/user_entity.dart';
 
 class NewUserPage extends ConsumerStatefulWidget {
   const NewUserPage({super.key});
@@ -18,7 +22,12 @@ class _NewUserPageState extends ConsumerState<NewUserPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _occupationController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   void dispose() {
@@ -26,6 +35,8 @@ class _NewUserPageState extends ConsumerState<NewUserPage> {
     _emailController.dispose();
     _phoneController.dispose();
     _occupationController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -33,6 +44,23 @@ class _NewUserPageState extends ConsumerState<NewUserPage> {
   Widget build(BuildContext context) {
     final textFieldSpace = const SizedBox(height: 50);
     final theme = ref.watch(themeProvider);
+    final registrationState = ref.watch(userRegistrationProvider);
+
+    ref.listen(userRegistrationProvider, (previous, next) {
+      next.when(
+        data: (data) {
+          if (data.isSuccess) {
+            _navigate();
+            _showMessage(data.message!);
+          }
+        },
+        error: (error, stackTrace) {
+          _showMessage(error.toString());
+        },
+        loading: () {},
+      );
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -103,7 +131,6 @@ class _NewUserPageState extends ConsumerState<NewUserPage> {
                 ],
               ),
               const SizedBox(height: 20),
-
               const Text(
                 'PERSONAL INFO',
                 style: TextStyle(
@@ -142,6 +169,59 @@ class _NewUserPageState extends ConsumerState<NewUserPage> {
               ),
               textFieldSpace,
               CustomTextField(
+                controller: _passwordController,
+                hintText: 'Password',
+                obscureText: !_isPasswordVisible,
+                keyboardType: TextInputType.visiblePassword,
+                textCapitalization: TextCapitalization.none,
+                label: 'Password',
+                suffixIcon: IconButton(
+                  icon: _isPasswordVisible
+                      ? const Icon(Icons.visibility_off_rounded)
+                      : const Icon(Icons.visibility_rounded),
+                  onPressed: () {
+                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                  },
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters long';
+                  }
+                  return null;
+                },
+              ),
+              textFieldSpace,
+              CustomTextField(
+                controller: _confirmPasswordController,
+                hintText: 'Confirm Password',
+                obscureText: !_isConfirmPasswordVisible,
+                keyboardType: TextInputType.visiblePassword,
+                textCapitalization: TextCapitalization.none,
+                label: 'Confirm Password',
+                suffixIcon: IconButton(
+                  icon: _isConfirmPasswordVisible
+                      ? Icon(Icons.visibility_off_rounded)
+                      : Icon(Icons.visibility_rounded),
+                  onPressed: () => setState(
+                    () =>
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm your password';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
+              textFieldSpace,
+              CustomTextField(
                 controller: _phoneController,
                 hintText: 'Phone Number',
                 obscureText: false,
@@ -158,28 +238,46 @@ class _NewUserPageState extends ConsumerState<NewUserPage> {
                 textCapitalization: TextCapitalization.sentences,
                 label: 'Occupation',
               ),
-
               const SizedBox(height: 40),
-
-              // Save Button
-              CustomElevatedButton(
-                text: 'Save Changes',
-                icon: const Icon(
-                  Icons.check_circle,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                onPressed: () {
-                  // TODO: Implement save logic
-                  if (_formKey.currentState!.validate()) {
-                    print('Form is valid');
-                  }
-                },
-              ),
+              registrationState.isLoading
+                  ? const CircularProgressIndicator()
+                  : CustomElevatedButton(
+                      text: 'Save Changes',
+                      icon: const Icon(
+                        Icons.check_circle,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          final user = UserEntity(
+                            id: 0,
+                            fullName: _nameController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            phoneNumber: _phoneController.text,
+                            occupation: _occupationController.text,
+                          );
+                          await ref
+                              .read(userRegistrationProvider.notifier)
+                              .registerUser(user);
+                        }
+                      },
+                    ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _navigate() {
+    context.go('/login');
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(CustomSnackBar(message: message, context: context));
   }
 }
